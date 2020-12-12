@@ -7,6 +7,7 @@ import requests
 import sys
 import getopt # "This module helps scripts to parse the command line arguments in sys.argv. " 
 # https://docs.python.org/3/library/getopt.html
+import config
 
 #--- functions ---#
 
@@ -15,7 +16,7 @@ def send_message_to_slack(message_for_slack):
     payload = '{"text":"%s"}' % message_for_slack
 
     # post payload to API endpoint
-    response = requests.post('https://hooks.slack.com/services/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', data=payload)
+    response = requests.post(f'{config.API_KEY}', data=payload)
 
     #should get 200 status code
     print(response.text)
