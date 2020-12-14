@@ -1,7 +1,3 @@
-# 2 functions needed:
-# main(): driver, which accepts input messages via CLI
-# post(): sends inputed message to slack using requests + SLACK API
-
 #--- imports ---#
 import requests
 import sys
