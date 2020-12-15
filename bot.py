@@ -19,7 +19,7 @@ slack_event_adapter = SlackEventAdapter(
 )
 
 #--- Flask ---#
-app Flask(__name__)
+app = Flask(__name__)
 
 greetings = ['hi', 'hello', 'howdy', 'hey', 'sup?']
 
@@ -31,13 +31,30 @@ def event_hook(request):
         return {"status": 403}
 
     if "type" in json_dict:
-        if json_dict["type"] = "url_verification":
+        if json_dict["type"] == "url_verification":
             response_dict = {"challenge": json_dict["challenge"]}
             return response_dict
         return {"status": 500}
         return
 
+@slack_event_adapter.on("app_mention")
+def handle_message(event_data):
+    def reply(value):
+        event_data = value
+        message = event_data["event"]
+        if message.get("subtype") is None:
+            command = message.get("text")
+            channel_id = message["channel"]
+            if any(greeting in command.lower() for greeting in greetings):
+                message = (
+                    "Hello <@%s>! :tada:"
+                    % message["user"]
+                )
+                slack_client.chat_postMessage(channel=channel_id, text=message)
+    thread = Thread(target=reply, kwargs={"value": event_data})
+    thread.start()
+    return Response(status=200)
 
 #--- run ---#
-if __name__ = "__main__":
+if __name__ == "__main__":
     app.run()
